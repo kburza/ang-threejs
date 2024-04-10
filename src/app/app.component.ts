@@ -25,8 +25,9 @@ export class AppComponent implements AfterViewInit {
     // init
 
     // what you're "looking at" (perspective)
-    const camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 10);
-    camera.position.z = 10;
+    // param: fov,
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.01, 10);
+    camera.position.z = 8;
 
     const scene = new THREE.Scene();
 
@@ -42,11 +43,21 @@ export class AppComponent implements AfterViewInit {
     // "material" = texture
     const material = new THREE.MeshNormalMaterial();
 
+    // Add edges to the geometry (chatGPT)
+    const edgesGeometry = new THREE.EdgesGeometry(geometry);
+    const edgesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+    const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+
     // "mesh" = combination of geo + mat
     const mesh = new THREE.Mesh(geometry, material);
 
+    // Combine mesh and edges into a group
+    const group = new THREE.Group();
+    group.add(mesh);
+    group.add(edges);
+
     // add mesh to the scene (view window)
-    scene.add(mesh);
+    scene.add(group);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
@@ -56,8 +67,8 @@ export class AppComponent implements AfterViewInit {
     // animation
 
     function animation(time: number) {
-      mesh.rotation.x = time / 2000;
-      mesh.rotation.y = time / 1000;
+      group.rotation.x = time / 2000;
+      group.rotation.y = time / 1000;
 
       renderer.render(scene, camera);
     }
