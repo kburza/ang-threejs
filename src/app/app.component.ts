@@ -19,7 +19,7 @@ export class AppComponent implements AfterViewInit {
 
   // source: https://www.npmjs.com/package/three
   ngAfterViewInit(): void {
-    const width = window.innerWidth,
+    let width = window.innerWidth,
       height = window.innerHeight;
 
     // init
@@ -72,5 +72,16 @@ export class AppComponent implements AfterViewInit {
 
       renderer.render(scene, camera);
     }
+
+    // resize
+    this.window.addEventListener('resize', () => {
+      //update sizes
+      width = window.innerWidth;
+      height = window.innerHeight;
+      // update camera
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
   }
 }
