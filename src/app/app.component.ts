@@ -3,6 +3,8 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import * as THREE from 'three';
+// for controls
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +28,7 @@ export class AppComponent implements AfterViewInit {
 
     // what you're "looking at" (perspective)
     // param: fov,
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.01, 10);
+    const camera = new THREE.PerspectiveCamera(50, width / height);
     camera.position.z = 8;
 
     const scene = new THREE.Scene();
@@ -34,27 +36,33 @@ export class AppComponent implements AfterViewInit {
     // geometry source (sphere): https://threejs.org/docs/?q=geom#api/en/geometries/SphereGeometry
 
     // for box geometry:
-    // const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-    // const material = new THREE.MeshNormalMaterial();
+    // const geometry = new THREE.BoxGeometry(1, 1, 1);
 
     // "geometry" = shape
-    const geometry = new THREE.SphereGeometry(1, 16, 16);
+    const geometry = new THREE.SphereGeometry(1, 12, 12);
 
     // "material" = texture
-    const material = new THREE.MeshNormalMaterial();
+    // const material = new THREE.MeshBasicMaterial({ color: 0x00008b });
+    var material = new THREE.MeshLambertMaterial({ color: 0x00008b });
 
     // Add edges to the geometry (chatGPT)
     const edgesGeometry = new THREE.EdgesGeometry(geometry);
     const edgesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-    const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+    const edges = new THREE.LineSegments(edgesGeometry, material);
 
     // "mesh" = combination of geo + mat
     const mesh = new THREE.Mesh(geometry, material);
 
+    // light source
+    var light = new THREE.PointLight(0xffffff, 1000, 250, 2);
+    light.position.set(0, 10, 8);
+
     // Combine mesh and edges into a group
     const group = new THREE.Group();
     group.add(mesh);
+    // edges for debugging
     group.add(edges);
+    scene.add(light);
 
     // add mesh to the scene (view window)
     scene.add(group);
@@ -83,5 +91,8 @@ export class AppComponent implements AfterViewInit {
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     });
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
   }
 }
