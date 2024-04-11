@@ -94,5 +94,10 @@ export class AppComponent implements AfterViewInit {
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
+    // change movement (acceleration on hold)
+    controls.enableDamping = true;
+    // zoom (scroll) + move object (x/y with right click) disabled
+    controls.enablePan = false;
+    controls.enableZoom = false;
   }
 }
